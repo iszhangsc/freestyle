@@ -89,6 +89,7 @@ public class ResultVO<T> implements Serializable {
         result.setMessage(ResultEnum.SUCCESS.getMessage());
         result.setResult(t);
         result.setSuccess(true);
+        result.setTimestamp(new Date());
         return result;
     }
 
@@ -102,6 +103,7 @@ public class ResultVO<T> implements Serializable {
         result.setSuccess(true);
         result.setCode(ResultEnum.SUCCESS.getCode());
         result.setMessage(ResultEnum.SUCCESS.getMessage());
+        result.setTimestamp(new Date());
         return result;
     }
 
@@ -115,6 +117,7 @@ public class ResultVO<T> implements Serializable {
         result.setSuccess(false);
         result.setCode(resultEnum.getCode());
         result.setMessage(resultEnum.getMessage());
+        result.setTimestamp(new Date());
         return result;
     }
 
@@ -128,6 +131,21 @@ public class ResultVO<T> implements Serializable {
         result.setSuccess(false);
         result.setCode(400);
         result.setMessage(message);
+        result.setTimestamp(new Date());
+        return result;
+    }
+
+    /**
+     * 失败返回错误信息调用
+     *
+     * @return ResultVo
+     */
+    public static <T> ResultVO<T> fail(int code, String message) {
+        ResultVO<T> result = new ResultVO<>();
+        result.setSuccess(false);
+        result.setCode(code);
+        result.setMessage(message);
+        result.setTimestamp(new Date());
         return result;
     }
 
@@ -141,6 +159,7 @@ public class ResultVO<T> implements Serializable {
         result.setCode(ResultEnum.SUCCESS.getCode());
         result.setMessage(message);
         result.setSuccess(false);
+        result.setTimestamp(new Date());
         return result;
     }
 

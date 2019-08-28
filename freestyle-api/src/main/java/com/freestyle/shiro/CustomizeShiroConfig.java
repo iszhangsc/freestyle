@@ -1,13 +1,14 @@
 package com.freestyle.shiro;
 
 import com.freestyle.shiro.authc.JwtFilter;
-import com.freestyle.shiro.authc.ShiroRealm;
+import com.freestyle.shiro.authc.TokenRealm;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
@@ -36,28 +37,34 @@ public class CustomizeShiroConfig {
         // 拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         //cas验证登录
-        filterChainDefinitionMap.put("/cas/client/validateLogin", "anon");
+        filterChainDefinitionMap.put("/cas/client/validateLogin", DefaultFilter.anon.name());
         // 配置不会被拦截的链接 顺序判断
         //登录接口排除
-        filterChainDefinitionMap.put("/sys/login", "anon");
+        filterChainDefinitionMap.put("/sys/login", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/sys/needNotLogin", DefaultFilter.anon.name());
         //登出接口排除
-        filterChainDefinitionMap.put("/sys/logout", "anon");
-        // 添加自己的过滤器并且取名为jwt
+        filterChainDefinitionMap.put("/sys/logout", DefaultFilter.anon.name());
+        // 添加自己的过滤器并且取名为jwtFilter
         Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
-        filterMap.put("jwt", new JwtFilter());
+        filterMap.put("jwtFilter", new JwtFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
-        filterChainDefinitionMap.put("/**", "jwt");
+        filterChainDefinitionMap.put("/**", "jwtFilter");
 
         // 未授权界面返回JSON
-        shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");
-        shiroFilterFactoryBean.setLoginUrl("/sys/common/403");
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");
+        shiroFilterFactoryBean.setLoginUrl("/sys/common/notLogin");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }
 
+    /**
+     * securityManager 不用直接注入shiroDBRealm，可能会导致事务失效
+     * 解决方法见 handleContextRefresh
+     * http://www.debugrun.com/a/NKS9EJQ.html
+     */
     @Bean("securityManager")
-    public DefaultWebSecurityManager securityManager(ShiroRealm myRealm) {
+    public DefaultWebSecurityManager securityManager(TokenRealm myRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(myRealm);
 
@@ -77,12 +84,14 @@ public class CustomizeShiroConfig {
 
     /**
      * 下面的代码是添加注解支持
-     * @return
+     * @return DefaultAdvisorAutoProxyCreator
      */
     @Bean
     @DependsOn("lifecycleBeanPostProcessor")
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        // 强制使用cglib，防止重复代理和可能引起代理出错的问题
+        // https://zhuanlan.zhihu.com/p/29161098
         defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
         return defaultAdvisorAutoProxyCreator;
     }

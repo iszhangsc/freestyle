@@ -9,6 +9,7 @@ import com.freestyle.module.system.domain.SysUser;
 import com.freestyle.module.system.service.SysUserService;
 import com.freestyle.shiro.IpUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -30,14 +31,15 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class ShiroRealm extends AuthorizingRealm {
+public class TokenRealm extends AuthorizingRealm {
 
 	@Lazy
 	private final SysUserService sysUserService;
 	@Lazy
 	private final RedisComponent redisComponent;
 
-	public ShiroRealm(SysUserService sysUserService, RedisComponent redisComponent) {
+
+	public TokenRealm(SysUserService sysUserService, RedisComponent redisComponent) {
 		this.sysUserService = sysUserService;
 		this.redisComponent = redisComponent;
 	}
@@ -90,8 +92,8 @@ public class ShiroRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 		String token = (String) auth.getCredentials();
 		if (token == null) {
-			log.info("————————身份认证失败——————————IP地址:  "+ IpUtils.getIpAddrByRequest(SpringContextComponent.getHttpServletRequest()));
-			throw new AuthenticationException("token为空!");
+			log.warn("————————身份认证失败——————————IP地址:  "+ IpUtils.getIpAddrByRequest(SpringContextComponent.getHttpServletRequest()));
+			throw new AccountException("token为空!");
 		}
 		// 校验token有效性
 		SysUser loginUser = this.checkUserTokenIsEffect(token);

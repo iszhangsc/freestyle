@@ -3,6 +3,14 @@ package com.freestyle.core.handler;
 import com.freestyle.common.exception.FreestyleException;
 import com.freestyle.common.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 全局异常拦截处理
@@ -97,7 +106,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     public ResultVO handlerHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        String warnMsg = "请求方法不支持".concat("支持的方法是：)".concat(e.getMethod()));
+        String warnMsg = "请求方法不支持".concat("支持的方法是：".concat(e.getMethod()));
         log.warn(warnMsg);
         return ResultVO.fail(warnMsg);
     }
@@ -116,6 +125,43 @@ public class GlobalExceptionHandler {
                 .concat(",警告消息:").concat(e.getLocalizedMessage());
         log.warn(warnMsg);
         return ResultVO.fail(warnMsg);
+    }
+
+    /*=========== Shiro 异常拦截==============*/
+
+    @ExceptionHandler(value = AccountException.class)
+    public ResultVO handlerAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证");
+    }
+
+    @ExceptionHandler(value = IncorrectCredentialsException.class)
+    public ResultVO handlerIncorrectCredentialsException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证");
+    }
+
+    @ExceptionHandler(value = UnknownAccountException.class)
+    public ResultVO handlerUnknownAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号不存在");
+    }
+
+    @ExceptionHandler(value = LockedAccountException.class)
+    public ResultVO handlerLockedAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号已被锁定");
+    }
+
+    @ExceptionHandler(value = ExcessiveAttemptsException.class)
+    public ResultVO handlerExcessiveAttemptsException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), exception.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(value = AuthenticationException.class)
+    public ResultVO handlerAuthenticationException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "身份验证失败");
+    }
+
+    @ExceptionHandler(value = UnauthorizedException.class)
+    public ResultVO handlerUnauthorizedException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "该账号无此权限");
     }
 
 }

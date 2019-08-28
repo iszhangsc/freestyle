@@ -14,7 +14,7 @@ public class FreestyleException extends RuntimeException {
     /**
      * 状态码
      */
-    private Integer code;
+    private int code;
 
     /**
      * 消息
