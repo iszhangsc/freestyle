@@ -1,5 +1,6 @@
 package com.freestyle.shiro.authc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freestyle.common.util.JwtUtil;
 import com.freestyle.common.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 
 /**
  * 鉴权登录拦截器
@@ -45,10 +49,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	/**
 	 * 执行登录认证
 	 *
-	 * @param request
-	 * @param response
+	 * @param request   请求体
+	 * @param response  响应体
 	 * @param mappedValue
-	 * @return
+	 * @return  boolean
 	 */
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -70,7 +74,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		if (StringUtils.isBlank(token)) {
 			httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			httpServletResponse.setContentType("application/json;charset=UTF-8");
-			httpServletResponse.getWriter().write(ResultVO.fail(HttpServletResponse.SC_UNAUTHORIZED, "请登录").toString());
+			responseMsg(httpServletResponse, "请先登录!");
 			return false;
 		}
 		JwtToken jwtToken = new JwtToken(token);
@@ -78,6 +82,24 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		getSubject(request, response).login(jwtToken);
 		// 如果没有抛出异常则代表登入成功，返回true
 		return true;
+	}
+
+	/**
+	 * 通过流的形式输出JSON信息到前端
+	 * @param resp 响应体
+	 */
+	private void responseMsg(HttpServletResponse resp, String msg)  {
+		resp.setContentType("application/json;charset=UTF-8");
+		resp.setCharacterEncoding("UTF-8");
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+		final ResultVO<Object> result = ResultVO.fail(resp.getStatus(), msg);
+		// 简化 try catch finally 此处关闭了writer对象的
+		try (PrintWriter writer = resp.getWriter()) {
+			writer.write(objectMapper.writeValueAsString(result));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
