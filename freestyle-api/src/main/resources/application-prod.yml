@@ -43,7 +43,8 @@ spring:
   mvc:
     static-path-pattern: /**
   resources:
-    static-locations: classpath:/static/,classpath:/public/
+    # 覆盖默认静态资源配置,添加 file:{freestyle.path.upload}
+    static-locations: classpath:/META-INF/resources/,classpath:/static,classpath:/resources/,file:{freestyle.path.upload}
   autoconfigure:
     exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
   datasource:
@@ -116,4 +117,11 @@ mybatis-plus:
 #
 freestyle:
   path:
-    upload: /home/iszhangsc/tmp
+    upload: /home/iszhangsc/freestyle/
+
+#---------------------------------日志 打印级别------------------------------#
+logging:
+  level:
+    root: info
+    com:
+      freestyle: info
