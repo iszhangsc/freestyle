@@ -1,11 +1,9 @@
-package com.freestyle.shiro.authc;
+package com.freestyle.module.system.shiro.authc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freestyle.common.util.JwtUtil;
 import com.freestyle.common.vo.ResultVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,7 +49,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	 *
 	 * @param request   请求体
 	 * @param response  响应体
-	 * @param mappedValue
+	 * @param mappedValue	为匹配请求的过滤器链中的过滤器指定的配置。
 	 * @return  boolean
 	 */
 	@Override
@@ -59,8 +57,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 		try {
 			return executeLogin(request, response);
 		} catch (Exception e) {
-			throw new AuthenticationException("Token失效，请重新登录", e);
+			log.debug(e.getLocalizedMessage());
+			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+			responseMsg(response, HttpStatus.UNAUTHORIZED.value(), e.getLocalizedMessage(),httpServletRequest.getServletPath());
 		}
+		return false;
 	}
 
 	/**
@@ -69,16 +70,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	@Override
 	protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		String token = httpServletRequest.getHeader(JwtUtil.TOKEN_NAME);
-		if (StringUtils.isBlank(token)) {
-			httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			httpServletResponse.setContentType("application/json;charset=UTF-8");
-			responseMsg(httpServletResponse, "请先登录!");
-			return false;
-		}
 		JwtToken jwtToken = new JwtToken(token);
-		// 提交给realm进行登入，如果错误他会抛出异常并被捕获
+		// 提交给自定义 TokenRealm 进行登入，如果错误它会抛出异常并被捕获
 		getSubject(request, response).login(jwtToken);
 		// 如果没有抛出异常则代表登入成功，返回true
 		return true;
@@ -86,14 +80,16 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 
 	/**
 	 * 通过流的形式输出JSON信息到前端
-	 * @param resp 响应体
+	 * @param response 响应体
 	 */
-	private void responseMsg(HttpServletResponse resp, String msg)  {
-		resp.setContentType("application/json;charset=UTF-8");
+	private void responseMsg(ServletResponse response, int status, String msg, String path)  {
+		HttpServletResponse resp = (HttpServletResponse) response;
+		resp.setStatus(status);
 		resp.setCharacterEncoding("UTF-8");
+		resp.setContentType("application/json;charset=UTF-8");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-		final ResultVO<Object> result = ResultVO.fail(resp.getStatus(), msg);
+		final ResultVO<Object> result = ResultVO.fail(resp.getStatus(), msg, path);
 		// 简化 try catch finally 此处关闭了writer对象的
 		try (PrintWriter writer = resp.getWriter()) {
 			writer.write(objectMapper.writeValueAsString(result));

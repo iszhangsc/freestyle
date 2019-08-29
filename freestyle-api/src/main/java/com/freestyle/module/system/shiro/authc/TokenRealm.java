@@ -1,13 +1,13 @@
-package com.freestyle.shiro.authc;
+package com.freestyle.module.system.shiro.authc;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.freestyle.common.constant.CommonConstant;
+import com.freestyle.common.constant.CacheConstant;
 import com.freestyle.common.util.JwtUtil;
 import com.freestyle.core.component.RedisComponent;
 import com.freestyle.core.component.SpringContextComponent;
 import com.freestyle.module.system.domain.SysUser;
 import com.freestyle.module.system.service.SysUserService;
-import com.freestyle.shiro.IpUtils;
+import com.freestyle.module.system.shiro.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
@@ -61,7 +61,7 @@ public class TokenRealm extends AuthorizingRealm {
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-		log.info("————权限认证 [ roles、permissions]————");
+		log.debug("————权限认证 [ roles、permissions]————");
 		SysUser sysUser = null;
 		String username = null;
 		if (principals != null) {
@@ -77,6 +77,7 @@ public class TokenRealm extends AuthorizingRealm {
 
 		// 设置用户拥有的权限集合，比如“sys:role:add,sys:user:add”
 		Set<String> permissionSet = new HashSet<>();
+//		permissionSet.add("user:add");
 				// sysUserService.getUserPermissionsSet(username);
 		info.addStringPermissions(permissionSet);
 		return info;
@@ -103,7 +104,7 @@ public class TokenRealm extends AuthorizingRealm {
 	/**
 	 * 校验token的有效性
 	 * 
-	 * @param token
+	 * @param token token
 	 */
 	private SysUser checkUserTokenIsEffect(String token) throws AuthenticationException {
 		// 解密获得username，用于和数据库进行对比
@@ -136,23 +137,23 @@ public class TokenRealm extends AuthorizingRealm {
 	 * 7、注：当前端接收到Response的Header中的Authorization值会存储起来，作为以后请求token使用
 	 * 参考方案：https://blog.csdn.net/qq394829044/article/details/82763936
 	 * 
-	 * @param userName
-	 * @param passWord
-	 * @return
+	 * @param userName 用户名
+	 * @param passWord	密码
+	 * @return	boolean
 	 */
 	private boolean jwtTokenRefresh(String token, String userName, String passWord) {
-		String cacheToken = String.valueOf(redisComponent.get(CommonConstant.PREFIX_USER_TOKEN + token));
+		String cacheToken = String.valueOf(redisComponent.get(CacheConstant.USER_TOKEN_CACHE_PREFIX + token));
 		if (StringUtils.isNotEmpty(cacheToken)) {
 			// 校验token有效性
 			if (!JwtUtil.verify(cacheToken, userName, passWord)) {
 				String newAuthorization = JwtUtil.sign(userName, passWord);
-				redisComponent.set(CommonConstant.PREFIX_USER_TOKEN + token, newAuthorization);
+				redisComponent.set(CacheConstant.USER_TOKEN_CACHE_PREFIX + token, newAuthorization);
 				// 设置超时时间
-				redisComponent.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+				redisComponent.expire(CacheConstant.USER_TOKEN_CACHE_PREFIX + token, JwtUtil.EXPIRE_TIME / 1000);
 			} else {
-				redisComponent.set(CommonConstant.PREFIX_USER_TOKEN + token, cacheToken);
+				redisComponent.set(CacheConstant.USER_TOKEN_CACHE_PREFIX + token, cacheToken);
 				// 设置超时时间
-				redisComponent.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+				redisComponent.expire(CacheConstant.USER_TOKEN_CACHE_PREFIX + token, JwtUtil.EXPIRE_TIME / 1000);
 			}
 			return true;
 		}

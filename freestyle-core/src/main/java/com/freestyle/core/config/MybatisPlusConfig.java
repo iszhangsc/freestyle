@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/8/27 上午11:21
  */
 @Configuration
-@MapperScan(value = {"com.freestyle.module.**.mapper*"})
+@MapperScan(value = {"com.freestyle.module.**.mapper"})
 public class MybatisPlusConfig {
 
 

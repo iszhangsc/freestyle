@@ -1,6 +1,7 @@
 package com.freestyle.module.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.freestyle.module.system.domain.SysUser;
 import com.freestyle.module.system.mapper.SysUserMapper;
 import com.freestyle.module.system.service.SysUserService;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @date 2019/8/27 下午2:57
  */
 @Service
-public class SysUserServiceImpl implements SysUserService {
+public class SysUserServiceImpl  extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysUserMapper sysUserMapper;
 
@@ -25,4 +26,5 @@ public class SysUserServiceImpl implements SysUserService {
         lambdaQueryWrapper.eq(SysUser::getUsername, username);
         return sysUserMapper.selectOne(lambdaQueryWrapper);
     }
+
 }

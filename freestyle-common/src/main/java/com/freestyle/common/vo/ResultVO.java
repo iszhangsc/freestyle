@@ -42,6 +42,11 @@ public class ResultVO<T> implements Serializable {
      */
     private Date timestamp;
 
+    /**
+     * 请求路由
+     */
+    private String path;
+
     private ResultVO() {
 
     }
@@ -69,12 +74,28 @@ public class ResultVO<T> implements Serializable {
      * @param code      返回代码
      * @param timestamp 时间戳
      */
-    public ResultVO(Boolean success, String message, Integer code, Date timestamp) {
+    private ResultVO(Boolean success, String message, Integer code, Date timestamp) {
         this.success = success;
         this.message = message;
         this.code = code;
         this.timestamp = timestamp;
     }
+
+    /**
+     * 无数据返回构造函数
+     * @param success   成功标识
+     * @param message   返回处理消息
+     * @param code      返回代码
+     * @param timestamp 时间戳
+     */
+    private ResultVO(Boolean success, String message, Integer code, Date timestamp, String path) {
+        this.success = success;
+        this.message = message;
+        this.code = code;
+        this.timestamp = timestamp;
+        this.path = path;
+    }
+
 
 
     /**
@@ -99,12 +120,7 @@ public class ResultVO<T> implements Serializable {
      * @return ResultVo
      */
     public static <T> ResultVO<T> ok() {
-        ResultVO<T> result = new ResultVO<>();
-        result.setSuccess(true);
-        result.setCode(ResultEnum.SUCCESS.getCode());
-        result.setMessage(ResultEnum.SUCCESS.getMessage());
-        result.setTimestamp(new Date());
-        return result;
+        return new ResultVO<>(true, ResultEnum.SUCCESS.getMessage(), ResultEnum.SUCCESS.getCode(), new Date());
     }
 
     /**
@@ -113,12 +129,7 @@ public class ResultVO<T> implements Serializable {
      * @return ResultVo
      */
     public static <T> ResultVO<T> fail(ResultEnum resultEnum) {
-        ResultVO<T> result = new ResultVO<>();
-        result.setSuccess(false);
-        result.setCode(resultEnum.getCode());
-        result.setMessage(resultEnum.getMessage());
-        result.setTimestamp(new Date());
-        return result;
+        return new ResultVO<>(false, ResultEnum.SUCCESS.getMessage(), ResultEnum.SUCCESS.getCode(), new Date());
     }
 
     /**
@@ -127,12 +138,7 @@ public class ResultVO<T> implements Serializable {
      * @return ResultVo
      */
     public static <T> ResultVO<T> fail(String message) {
-        ResultVO<T> result = new ResultVO<>();
-        result.setSuccess(false);
-        result.setCode(400);
-        result.setMessage(message);
-        result.setTimestamp(new Date());
-        return result;
+        return new ResultVO<>(false, message, 400, new Date());
     }
 
     /**
@@ -141,12 +147,16 @@ public class ResultVO<T> implements Serializable {
      * @return ResultVo
      */
     public static <T> ResultVO<T> fail(int code, String message) {
-        ResultVO<T> result = new ResultVO<>();
-        result.setSuccess(false);
-        result.setCode(code);
-        result.setMessage(message);
-        result.setTimestamp(new Date());
-        return result;
+        return new ResultVO<>(false, message, code, new Date());
+    }
+
+    /**
+     * 失败返回错误信息调用
+     *
+     * @return ResultVo
+     */
+    public static <T> ResultVO<T> fail(int code, String message, String path) {
+        return new ResultVO<>(false, message, code, new Date(), path);
     }
 
     /**
@@ -154,13 +164,8 @@ public class ResultVO<T> implements Serializable {
      *
      * @return ResultVO
      */
-    public static  <T> ResultVO<T> error(String message) {
-        ResultVO<T> result = new ResultVO<>();
-        result.setCode(ResultEnum.SUCCESS.getCode());
-        result.setMessage(message);
-        result.setSuccess(false);
-        result.setTimestamp(new Date());
-        return result;
+    public static  <T> ResultVO<T> error(String message, String path) {
+        return new ResultVO<>(false, message, ResultEnum.SUCCESS.getCode(), new Date(), path);
     }
 
 }

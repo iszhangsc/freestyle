@@ -1,8 +1,10 @@
-package com.freestyle.core.handler;
+package com.freestyle.module.system.handler;
 
 import com.freestyle.common.exception.FreestyleException;
 import com.freestyle.common.vo.ResultVO;
+import com.freestyle.module.system.domain.SysUser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -32,8 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
-
     /**
      * 拦截业务异常类：   一般为业务逻辑错误
      * @author zhangshichang
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResultVO handlerServiceException(HttpServletRequest request, Exception e) {
         log.error("请求接口地址:{},失败信息:{}", request.getRequestURL().toString(), e.getMessage());
-        return ResultVO.error("服务器内部错误");
+        return ResultVO.error("服务器内部错误", request.getServletPath());
     }
 
 
@@ -131,37 +131,39 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = AccountException.class)
     public ResultVO handlerAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证");
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证", request.getServletPath());
     }
 
     @ExceptionHandler(value = IncorrectCredentialsException.class)
     public ResultVO handlerIncorrectCredentialsException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证");
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "不正确的凭证", request.getServletPath());
     }
 
     @ExceptionHandler(value = UnknownAccountException.class)
     public ResultVO handlerUnknownAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号不存在");
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号不存在", request.getServletPath());
     }
 
     @ExceptionHandler(value = LockedAccountException.class)
     public ResultVO handlerLockedAccountException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号已被锁定");
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "账号已被锁定", request.getServletPath());
     }
 
     @ExceptionHandler(value = ExcessiveAttemptsException.class)
     public ResultVO handlerExcessiveAttemptsException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), exception.getLocalizedMessage());
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), exception.getLocalizedMessage(), request.getServletPath());
     }
 
     @ExceptionHandler(value = AuthenticationException.class)
     public ResultVO handlerAuthenticationException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "身份验证失败");
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "身份验证失败", request.getServletPath());
     }
 
     @ExceptionHandler(value = UnauthorizedException.class)
     public ResultVO handlerUnauthorizedException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
-        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "该账号无此权限");
+        SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        log.warn("警告: --->账号:{},无此权限访问:{}", sysUser.getUsername(), request.getServletPath());
+        return ResultVO.fail(HttpStatus.FORBIDDEN.value(), "该账号无此权限", request.getServletPath());
     }
 
 }

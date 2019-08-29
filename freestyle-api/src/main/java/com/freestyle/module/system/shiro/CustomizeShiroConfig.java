@@ -1,7 +1,7 @@
-package com.freestyle.shiro;
+package com.freestyle.module.system.shiro;
 
-import com.freestyle.shiro.authc.JwtFilter;
-import com.freestyle.shiro.authc.TokenRealm;
+import com.freestyle.module.system.shiro.authc.JwtFilter;
+import com.freestyle.module.system.shiro.authc.TokenRealm;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -41,7 +41,17 @@ public class CustomizeShiroConfig {
         // 配置不会被拦截的链接 顺序判断
         //登录接口排除
         filterChainDefinitionMap.put("/sys/login", DefaultFilter.anon.name());
+        // druid 监控页面排除
+        filterChainDefinitionMap.put("/druid/**", DefaultFilter.anon.name());
         filterChainDefinitionMap.put("/sys/needNotLogin", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.js", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.css", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.html", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.svg", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.pdf", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.jpg", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.png", DefaultFilter.anon.name());
+        filterChainDefinitionMap.put("/**/*.ico", DefaultFilter.anon.name());
         //登出接口排除
         filterChainDefinitionMap.put("/sys/logout", DefaultFilter.anon.name());
         // 添加自己的过滤器并且取名为jwtFilter
