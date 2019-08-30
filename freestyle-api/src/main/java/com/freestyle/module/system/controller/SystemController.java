@@ -8,8 +8,8 @@ import com.freestyle.module.system.domain.SysUser;
 import com.freestyle.module.system.service.SysUserService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,13 +27,11 @@ import java.util.Map;
 @RequestMapping("/sys")
 public class SystemController {
 
-    private final RedisComponent redisComponent;
-    private final SysUserService sysUserService;
+    @Autowired
+    private RedisComponent redisComponent;
+    @Autowired
+    private SysUserService sysUserService;
 
-    public SystemController(RedisComponent redisComponent, SysUserService sysUserService) {
-        this.redisComponent = redisComponent;
-        this.sysUserService = sysUserService;
-    }
 
     @RequestMapping("/403")
     public ResultVO unauthorizedUrl(){
@@ -43,13 +41,18 @@ public class SystemController {
     @GetMapping("/needPermission")
     @RequiresPermissions("user:add")
     public ResultVO needPermission() {
-        return ResultVO.ok("拥有添加用户的权限");
+        return ResultVO.ok("user:add");
     }
 
+    @GetMapping("/needNotLogin")
+    public ResultVO needNotLogin() {
+        return ResultVO.ok("");
+    }
+
+    @RequiresPermissions("performance")
     @RequestMapping("/needLogin")
     public ResultVO notLogin() {
-        final SysUser sysUser = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        return ResultVO.ok(sysUser);
+        return ResultVO.ok("您拥有性能监控权限");
     }
 
     @PostMapping("/login")
@@ -58,10 +61,10 @@ public class SystemController {
         final String password = map.get("password");
         final SysUser user = sysUserService.getUserByName(username);
         if (user == null) {
-            return ResultVO.fail("用户不存在");
+            return ResultVO.fail("用户名或密码错误");
         }
         if (!password.equals(user.getPassword())) {
-            return ResultVO.fail("密码错误");
+            return ResultVO.fail("用户名或密码错误");
         }
         return generatedToken(user);
     }

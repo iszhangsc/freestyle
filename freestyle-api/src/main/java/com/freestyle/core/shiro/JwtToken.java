@@ -1,4 +1,4 @@
-package com.freestyle.module.system.shiro.authc;
+package com.freestyle.core.shiro;
  
 import org.apache.shiro.authc.AuthenticationToken;
 

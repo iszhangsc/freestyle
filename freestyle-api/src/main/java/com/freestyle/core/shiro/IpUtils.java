@@ -1,4 +1,4 @@
-package com.freestyle.module.system.shiro;
+package com.freestyle.core.shiro;
 
 import javax.servlet.http.HttpServletRequest;
 

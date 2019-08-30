@@ -22,7 +22,7 @@ import java.util.Date;
 public class SysUser {
 
     @TableId(value = "user_id", type = IdType.AUTO)
-    private Long userId;
+    private Integer userId;
 
     private String username;
 

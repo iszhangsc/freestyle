@@ -10,10 +10,15 @@ public interface CacheConstant {
     /**
      * 字典信息缓存名称前缀
      */
-    public static final String DICT_CACHE_PREFIX = "dictCache:";
+    String DICT_CACHE_PREFIX = "dictCache:";
 
     /**
      * 用户token缓存名称前缀
      */
-    public static final String USER_TOKEN_CACHE_PREFIX = "user:token:cache:";
+    String USER_TOKEN_CACHE_PREFIX = "user:token:cache:";
+
+    /**
+     * 用户角色缓存
+     */
+    String USER_ROLE_CACHE_PREFIX = "user:role:cache:";
 }

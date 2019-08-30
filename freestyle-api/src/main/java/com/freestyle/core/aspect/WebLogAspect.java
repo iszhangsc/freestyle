@@ -1,9 +1,9 @@
-package com.freestyle.module.system.aspect;
+package com.freestyle.core.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freestyle.common.vo.ResultVO;
 import com.freestyle.core.component.SpringContextComponent;
-import com.freestyle.module.system.shiro.IpUtils;
+import com.freestyle.core.shiro.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;

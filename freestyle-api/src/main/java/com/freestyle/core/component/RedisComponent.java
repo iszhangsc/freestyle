@@ -1,5 +1,6 @@
 package com.freestyle.core.component;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +20,7 @@ public class RedisComponent {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 
+	@Autowired
 	public RedisComponent(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}

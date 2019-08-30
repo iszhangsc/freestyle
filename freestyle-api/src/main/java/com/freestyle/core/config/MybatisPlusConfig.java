@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 数据源配置
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/8/27 上午11:21
  */
 @Configuration
+@EnableTransactionManagement
 @MapperScan(value = {"com.freestyle.module.**.mapper"})
 public class MybatisPlusConfig {
 

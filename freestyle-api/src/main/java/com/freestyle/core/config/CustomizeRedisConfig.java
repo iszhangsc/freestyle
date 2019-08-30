@@ -20,6 +20,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Arrays;
@@ -36,6 +37,8 @@ import static java.util.Collections.singletonMap;
 @EnableCaching
 public class CustomizeRedisConfig extends CachingConfigurerSupport {
 
+    @Resource
+    private LettuceConnectionFactory lettuceConnectionFactory;
     /**
      *  自定义的缓存key的生成策略 若想使用这个key
      *              只需要讲注解上keyGenerator的值设置为keyGenerator即可</br>

@@ -1,6 +1,5 @@
 package com.freestyle;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,11 +10,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
+ * freestyle 启动类
  * @author zhangshichang
  * @date 2019/8/28 上午11:27
  */
 @Slf4j
-@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
+@SpringBootApplication
 public class FreestyleApplication {
 
     public static void main(String[] args) throws UnknownHostException {

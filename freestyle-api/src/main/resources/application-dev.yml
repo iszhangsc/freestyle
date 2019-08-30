@@ -101,6 +101,7 @@ spring:
     port: 6379
 #mybatis plus 设置
 mybatis-plus:
+  type-aliases-package: com.freestyle.module.*.domain
   mapper-locations: classpath:mapper/**/*Mapper.xml
   global-config:
     # 关闭MP3.0自带的banner

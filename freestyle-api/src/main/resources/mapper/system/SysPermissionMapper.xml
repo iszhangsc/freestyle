@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.freestyle.module.system.mapper.SysPermissionMapper">
+
+
+    <select id="queryByUsername" resultType="com.freestyle.module.system.domain.SysPermission">
+        SELECT tsp.*
+        FROM t_sys_permission tsp
+        WHERE exists(
+                      select tsrp.id
+                      from t_sys_role_permission tsrp
+                               join t_sys_role tsr on tsrp.role_id = tsr.role_id
+                               join t_sys_user_role tsur on tsr.role_id = tsur.id
+                               join t_sys_user tsu on tsur.id = tsu.user_id
+                      where tsp.permission_id = tsrp.permission_id
+                        AND tsu.username = #{username}
+                  )
+    </select>
+
+</mapper>

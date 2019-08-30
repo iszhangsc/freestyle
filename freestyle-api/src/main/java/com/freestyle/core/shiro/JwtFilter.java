@@ -1,4 +1,4 @@
-package com.freestyle.module.system.shiro.authc;
+package com.freestyle.core.shiro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freestyle.common.util.JwtUtil;
