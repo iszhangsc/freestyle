@@ -1,3 +1,7 @@
 spring:
   profiles:
     active: dev
+  cache:
+    redis:
+      use-key-prefix: true
+      time-to-live: 1d

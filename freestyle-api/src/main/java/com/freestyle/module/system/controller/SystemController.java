@@ -9,7 +9,6 @@ import com.freestyle.module.system.service.SysUserService;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 /**
+ * 系统路由
  * @author zhangshichang
  * @date 2019/8/28 下午4:47
  */
@@ -27,10 +27,13 @@ import java.util.Map;
 @RequestMapping("/sys")
 public class SystemController {
 
-    @Autowired
-    private RedisComponent redisComponent;
-    @Autowired
-    private SysUserService sysUserService;
+    private final RedisComponent redisComponent;
+    private final SysUserService sysUserService;
+
+    public SystemController(RedisComponent redisComponent, SysUserService sysUserService) {
+        this.redisComponent = redisComponent;
+        this.sysUserService = sysUserService;
+    }
 
 
     @RequestMapping("/403")

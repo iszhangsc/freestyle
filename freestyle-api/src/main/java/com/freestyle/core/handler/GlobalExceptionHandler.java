@@ -1,8 +1,9 @@
-package com.freestyle.module.system.handler;
+package com.freestyle.core.handler;
 
 import com.freestyle.common.exception.FreestyleException;
 import com.freestyle.common.vo.ResultVO;
 import com.freestyle.module.system.domain.SysUser;
+import io.lettuce.core.RedisConnectionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
@@ -48,6 +49,11 @@ public class GlobalExceptionHandler {
         return ResultVO.fail(e.getMsg());
     }
 
+    @ExceptionHandler(value = RedisConnectionException.class)
+    public ResultVO handlerRedisConnectionException(HttpServletRequest request, RedisConnectionException e) {
+        log.error("redis异常:{}", e.getLocalizedMessage());
+        return ResultVO.fail("redis 连接异常,请联系管理员");
+    }
 
     /**
      * 拦截内部异常类：  一般为未知错误

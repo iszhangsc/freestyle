@@ -2,6 +2,7 @@ package com.freestyle.module.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.freestyle.core.domain.BaseDomain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,12 +21,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysRolePermission implements Serializable {
+public class SysRolePermission extends BaseDomain implements Serializable {
 
     private static final long serialVersionUID = 4668224286375721932L;
-
-    @TableId(type = IdType.AUTO)
-    private Integer id;
 
     private Integer roleId;
 

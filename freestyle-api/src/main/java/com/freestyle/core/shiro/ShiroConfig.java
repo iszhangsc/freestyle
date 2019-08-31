@@ -25,7 +25,7 @@ import java.util.Map;
  * @date 2019/8/27 下午2:31
  */
 @Configuration
-public class ShiroConfiguration {
+public class ShiroConfig {
 
 
     /**

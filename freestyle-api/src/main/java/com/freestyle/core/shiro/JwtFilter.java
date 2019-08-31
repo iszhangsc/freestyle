@@ -3,6 +3,7 @@ package com.freestyle.core.shiro;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freestyle.common.util.JwtUtil;
 import com.freestyle.common.vo.ResultVO;
+import io.lettuce.core.RedisConnectionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -56,10 +57,14 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		try {
 			return executeLogin(request, response);
+		} catch (RedisConnectionException e) {
+			log.error("redis连接异常:{}", e.getLocalizedMessage());
+			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+			responseMsg(response, HttpStatus.BAD_REQUEST.value(), e.getLocalizedMessage(), httpServletRequest.getServletPath());
 		} catch (Exception e) {
 			log.debug(e.getLocalizedMessage());
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-			responseMsg(response, HttpStatus.UNAUTHORIZED.value(), e.getLocalizedMessage(),httpServletRequest.getServletPath());
+			responseMsg(response, HttpStatus.UNAUTHORIZED.value(), e.getLocalizedMessage(), httpServletRequest.getServletPath());
 		}
 		return false;
 	}

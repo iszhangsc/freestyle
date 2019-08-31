@@ -4,29 +4,27 @@ import com.freestyle.common.constant.DataBaseConstant;
 import com.freestyle.common.util.BaseConvertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
 import org.apache.shiro.SecurityUtils;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Properties;
 
 /**
+ *
  * 自定义Mybatis拦截器，自动注入创建人、创建时间、修改人、修改时间
+ * @deprecated 太麻烦,代码太多。 替换方案----------->该方法实现了这一操作 {@link com.freestyle.core.handler.MyMetaObjectHandler}
  * @author zhangshichang
  * @date 2019/8/27 上午9:50
  */
 @Slf4j
-@Component
-@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
+//@Component
+//@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class CustomizeMybatisInterceptor implements Interceptor {
 
     @Override

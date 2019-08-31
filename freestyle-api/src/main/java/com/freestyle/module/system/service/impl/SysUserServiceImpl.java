@@ -10,7 +10,6 @@ import com.freestyle.module.system.mapper.SysUserMapper;
 import com.freestyle.module.system.mapper.SysUserRoleMapper;
 import com.freestyle.module.system.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +26,15 @@ import java.util.stream.Collectors;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    @Autowired
-    private SysUserMapper sysUserMapper;
-    @Autowired
-    private SysUserRoleMapper sysUserRoleMapper;
-    @Autowired
-    private SysPermissionMapper sysPermissionMapper;
+    private final SysUserMapper sysUserMapper;
+    private final SysUserRoleMapper sysUserRoleMapper;
+    private final SysPermissionMapper sysPermissionMapper;
+
+    public SysUserServiceImpl(SysUserMapper sysUserMapper, SysPermissionMapper sysPermissionMapper, SysUserRoleMapper sysUserRoleMapper) {
+        this.sysUserMapper = sysUserMapper;
+        this.sysPermissionMapper = sysPermissionMapper;
+        this.sysUserRoleMapper = sysUserRoleMapper;
+    }
 
     @Override
     public SysUser getUserByName(String username) {

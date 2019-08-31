@@ -1,7 +1,6 @@
 package com.freestyle.module.system.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.freestyle.core.domain.BaseDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -16,20 +15,18 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
-public class SysUserRole implements Serializable {
+public class SysUserRole extends BaseDomain implements Serializable {
 
     private static final long serialVersionUID = 1063857024906267827L;
 
-    @TableId(type = IdType.AUTO)
-    private Integer id;
-
     /**
-     * 用户id
+     * 用户表主键
      */
     private Integer userId;
 
     /**
-     * 角色id
+     * 角色表主键
      */
     private Integer roleId;
+
 }

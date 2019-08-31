@@ -1,14 +1,12 @@
 package com.freestyle.module.system.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.freestyle.core.domain.BaseDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * 系统用户实体
@@ -19,14 +17,12 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("t_sys_user")
-public class SysUser {
+public class SysUser extends BaseDomain implements Serializable {
 
-    @TableId(value = "user_id", type = IdType.AUTO)
-    private Integer userId;
+    private static final long serialVersionUID = 2419405270090751886L;
 
     private String username;
 
-    @JsonIgnore
     private String password;
 
     private String mobile;
@@ -37,13 +33,6 @@ public class SysUser {
 
     private String remark;
 
-    private Date createTime;
-
-    private String createBy;
-
-    private String updateBy;
-
-    private Date updateTime;
     /**
      * 头像
      */

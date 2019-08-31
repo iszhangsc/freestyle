@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * 数据源配置
+ * 事物、MyBatis包扫描路径、分页插件配置
  *
  * @author zhangshichang
  * @date 2019/8/27 上午11:21

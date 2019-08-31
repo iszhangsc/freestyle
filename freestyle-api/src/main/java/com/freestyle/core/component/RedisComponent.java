@@ -1,7 +1,7 @@
 package com.freestyle.core.component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -19,10 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class RedisComponent {
 
 	private final RedisTemplate<String, Object> redisTemplate;
+	private final StringRedisTemplate stringRedisTemplate;
 
-	@Autowired
-	public RedisComponent(RedisTemplate<String, Object> redisTemplate) {
+	public RedisComponent(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
 		this.redisTemplate = redisTemplate;
+		this.stringRedisTemplate = stringRedisTemplate;
 	}
 
 

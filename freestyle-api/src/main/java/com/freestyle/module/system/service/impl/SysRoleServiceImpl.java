@@ -5,7 +5,6 @@ import com.freestyle.common.constant.CacheConstant;
 import com.freestyle.module.system.domain.SysRole;
 import com.freestyle.module.system.mapper.SysRoleMapper;
 import com.freestyle.module.system.service.SysRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +15,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
-    @Autowired
-    private  SysRoleMapper sysRoleMapper;
+    private final SysRoleMapper sysRoleMapper;
+
+    public SysRoleServiceImpl(SysRoleMapper sysRoleMapper) {
+        this.sysRoleMapper = sysRoleMapper;
+    }
 
     @Override
     @CacheEvict(value = CacheConstant.USER_ROLE_CACHE_PREFIX, allEntries = true)

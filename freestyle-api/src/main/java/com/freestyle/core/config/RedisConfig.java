@@ -20,7 +20,6 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Arrays;
@@ -35,10 +34,8 @@ import static java.util.Collections.singletonMap;
  */
 @Configuration
 @EnableCaching
-public class CustomizeRedisConfig extends CachingConfigurerSupport {
+public class RedisConfig extends CachingConfigurerSupport {
 
-    @Resource
-    private LettuceConnectionFactory lettuceConnectionFactory;
     /**
      *  自定义的缓存key的生成策略 若想使用这个key
      *              只需要讲注解上keyGenerator的值设置为keyGenerator即可</br>
@@ -90,10 +87,11 @@ public class CustomizeRedisConfig extends CachingConfigurerSupport {
      * 缓存配置管理器
      */
     @Bean
-    public CacheManager cacheManager(LettuceConnectionFactory factory) {
+    public CacheManager cacheManager(LettuceConnectionFactory lettuceConnectionFactory) {
         // 配置序列化
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1));
-        RedisCacheConfiguration redisCacheConfiguration = config.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        RedisCacheConfiguration redisCacheConfiguration = config.serializeKeysWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
 
@@ -103,9 +101,10 @@ public class CustomizeRedisConfig extends CachingConfigurerSupport {
         /* 默认配置，设置缓存有效期 1小时*/
         //RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1));
         /* 配置test的超时时间为120s*/
-        return RedisCacheManager.builder(RedisCacheWriter.lockingRedisCacheWriter(factory)).cacheDefaults(redisCacheConfiguration)
+        return RedisCacheManager.builder(RedisCacheWriter.lockingRedisCacheWriter(lettuceConnectionFactory)).cacheDefaults(redisCacheConfiguration)
                 .withInitialCacheConfigurations(singletonMap("test", RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(120)).disableCachingNullValues()))
                 .transactionAware().build();
+
     }
 
 }
