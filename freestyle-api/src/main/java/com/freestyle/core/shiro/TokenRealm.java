@@ -17,6 +17,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -34,6 +35,12 @@ public class TokenRealm extends AuthorizingRealm {
     private final SysUserService sysUserService;
     private final RedisComponent redisComponent;
 
+    /**
+     * 此处一定要懒加载，否则 sysUserService事物、缓存都不生效
+     * @author zhangshichang
+     * @date 2019/9/2 上午10:52
+     */
+    @Lazy
     public TokenRealm(RedisComponent redisComponent, SysUserService sysUserService) {
         this.redisComponent = redisComponent;
         this.sysUserService = sysUserService;

@@ -26,4 +26,5 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public int deleteRole(Integer roleId) {
         return sysRoleMapper.deleteById(roleId);
     }
+
 }
