@@ -192,7 +192,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -200,6 +200,6 @@
                 <version>${spring.boot.version}</version>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>

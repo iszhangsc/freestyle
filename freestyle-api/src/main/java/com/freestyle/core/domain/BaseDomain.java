@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,8 +18,13 @@ import java.util.Date;
  * @date 2019/8/31 下午3:36
  */
 @Data
-public abstract class BaseDomain {
+public abstract class BaseDomain implements Serializable {
 
+    private static final long serialVersionUID = 7836318400744963291L;
+
+    /**
+     * 主键
+     */
     @TableId(type = IdType.AUTO)
     private Integer id;
 

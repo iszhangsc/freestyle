@@ -1,5 +1,6 @@
 package com.freestyle.module.system.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.freestyle.core.domain.BaseDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  */
 @Data
 @Accessors(chain = true)
+@TableName(value = "t_sys_role")
 @EqualsAndHashCode(callSuper = false)
 public class SysUserRole extends BaseDomain implements Serializable {
 
