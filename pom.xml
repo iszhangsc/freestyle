@@ -35,7 +35,7 @@
         <qiniu.version>7.2.23</qiniu.version>
         <fastjson.version>1.2.58</fastjson.version>
         <dynamic-datasource.version>2.5.4</dynamic-datasource.version>
-        <guava.version>27.1-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
     </properties>
 
     <dependencyManagement>
